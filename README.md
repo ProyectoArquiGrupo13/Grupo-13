@@ -1,5 +1,5 @@
 # Arquitectura de Ordenadores
-Grupo 5 validado
+Grupo 13 validado
 
 
 This simple project was built with some tools such us:
