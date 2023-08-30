@@ -1,4 +1,4 @@
- /*################################################################################################*/
+/*################################################################################################*/
 /*####################################### CLIENTE MQTT ###########################################*/
 /*################################################################################################*/
 
@@ -25,6 +25,7 @@ client.onConnectionLost = function (responseObject) {
 let prevCPUValue = 0;
 let prevMemoryValue = 0;
 let prevDiskValue = 0;
+let prevRecepcionValue = 0;
 
 
 client.onMessageArrived = function (message) {
@@ -35,31 +36,44 @@ client.onMessageArrived = function (message) {
         let dataCPU = dataFormat.CPU;
         let dataMemoria = dataFormat.Memoria;
         let dataDisco = dataFormat.Disco;
+        let dataRecepcion = dataFormat.Recepcion;
+        
+        //info pc
+        document.getElementById("arquitecturaValue").innerText = response.Arquitectura;
+        document.getElementById("sistemaValue").innerText = response.Sistema;
+        document.getElementById("ramValue").innerText = response.Ram;
+        document.getElementById("procesadorValue").innerText = response.Procesador;
+        document.getElementById("almacenamientoValue").innerText = response.Almacenamiento;
 
         // Calcular la diferencia con respecto al valor anterior
         let diffCPU = dataCPU - prevCPUValue;
         let diffMemory = dataMemoria - prevMemoryValue;
         let diffDisk = dataDisco - prevDiskValue;
+        let diffRecepcion = dataRecepcion - prevRecepcionValue;
 
         // Calcular el porcentaje de cambio
         let percentageCPU = calculatePercentage(diffCPU, prevCPUValue);
         let percentageMemory = calculatePercentage(diffMemory, prevMemoryValue);
         let percentageDisk = calculatePercentage(diffDisk, prevDiskValue);
+        let percentageRecepcion = calculatePercentage(diffRecepcion, prevRecepcionValue);
 
         // Actualizar los valores en tiempo real en la página
-        document.getElementById("cpuValue").innerText = dataCPU + "GHz";
-        document.getElementById("memoryValue").innerText = dataMemoria + "MHz";
-        document.getElementById("diskValue").innerText = dataDisco + "Kb/s";
+        document.getElementById("cpuValue").innerText = dataCPU;
+        document.getElementById("memoryValue").innerText = dataMemoria;
+        document.getElementById("diskValue").innerText = dataDisco;
+        document.getElementById("RecepcionValue").innerText = dataRecepcion;
 
         // Actualizar los porcentajes en la página
-        document.getElementById("cpuPercentage").innerText = percentageCPU + "GHz";
-        document.getElementById("memoryPercentage").innerText = percentageMemory + "MHz";
-        document.getElementById("diskPercentage").innerText = percentageDisk + "Kb/s";
+        document.getElementById("cpuPercentage").innerHTML = getColoredPercentage(percentageCPU);
+        document.getElementById("memoryPercentage").innerHTML = getColoredPercentage(percentageMemory);
+        document.getElementById("diskPercentage").innerHTML = getColoredPercentage(percentageDisk);
+        document.getElementById("RecepcionPercentage").innerHTML = getColoredPercentage(percentageRecepcion);
 
         // Actualizar los valores anteriores con los nuevos valores
         prevCPUValue = dataCPU;
         prevMemoryValue = dataMemoria;
         prevDiskValue = dataDisco;
+        prevRecepcionValue = dataRecepcion;
 
         // Cargar datos CPU, Memoria y Almacenamiento en las gráficas
         addData(myChartCPU, dataCPU);
@@ -79,6 +93,16 @@ function calculatePercentage(diff, prevValue) {
         return percentage >= 0 ? "+" + percentage : percentage;
     } else {
         return "0";
+    }
+}
+// Función para obtener el porcentaje coloreado
+function getColoredPercentage(percentage) {
+    if (parseFloat(percentage) > 0) {
+        return '<span style="color: green;">' + percentage + '%</span>';
+    } else if (parseFloat(percentage) < 0) {
+        return '<span style="color: red;">' + percentage + '%</span>';
+    } else {
+        return percentage + '%';
     }
 }
 
